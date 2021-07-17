@@ -1,14 +1,15 @@
 
 ### Sequelize Model Generation
 ```
-npx sequelize-cli model:generate --name vehicle --attributes licence:string,model:string,engine:string,chasis:string
-npx sequelize-cli model:generate --name track --attributes vehicle_id:string
+npx sequelize-cli model:generate --name vehicle --attributes license:string,model:string,engine:string,chassis:string
+npx sequelize-cli model:generate --name track --attributes vehicleId:string
 ```
 
 
 ### Sequelize Seed Generation
 ```
 npx sequelize-cli seed:generate --name vehicle
+npx sequelize-cli seed:generate --name tracks
 ```
 
 

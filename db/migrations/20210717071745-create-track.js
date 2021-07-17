@@ -9,10 +9,13 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       vehicleId: {
-        type: Sequelize.UUID
+        type: Sequelize.INTEGER
       },
       location: {
-        type: Sequelize.GEOMETRY('POINT', 4326)
+        type: Sequelize.GEOMETRY('POINT')
+      },
+      trackedAt: {
+        type: Sequelize.DATE
       },
       createdAt: {
         allowNull: false,
@@ -22,6 +25,8 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE
       }
+    }, {
+      underscore: false
     });
   },
   down: async (queryInterface, Sequelize) => {

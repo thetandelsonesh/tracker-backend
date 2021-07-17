@@ -18,6 +18,7 @@
     "sequelize": "^6.6.5"
   },
   "devDependencies": {
+    "csv-parser": "^3.0.0",
     "nodemon": "^2.0.12",
     "sequelize-cli": "^6.2.0"
   }

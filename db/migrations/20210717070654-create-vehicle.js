@@ -8,7 +8,7 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      licence: {
+      license: {
         type: Sequelize.STRING,
         unique: true
       },
@@ -19,7 +19,7 @@ module.exports = {
         type: Sequelize.STRING,
         unique: true
       },
-      chasis: {
+      chassis: {
         type: Sequelize.STRING,
         unique: true
       },
