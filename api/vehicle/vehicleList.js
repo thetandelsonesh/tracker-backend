@@ -11,7 +11,7 @@ const vehicleList = async (req, res) => {
       msg: "Vehicle List"
     });
   }catch (e){
-    res.send(ERROR_500);
+    res.send(e);
   }
 }
 
