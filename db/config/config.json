@@ -6,19 +6,12 @@
     "host": "127.0.0.1",
     "dialect": "postgres"
   },
-  "test": {
-    "username": "root",
-    "password": null,
-    "database": "database_test",
-    "host": "localhost",
-    "dialect": "mysql"
-  },
   "production": {
-    "username": "root",
-    "password": null,
-    "database": "database_production",
+    "username": "postgres",
+    "password": "az19!*SST",
+    "database": "postgres",
     "host": "localhost",
-    "dialect": "mysql",
+    "dialect": "postgres",
     "pool": {
       "max": 5,
       "min": 0,
