@@ -10,7 +10,7 @@ const readCSV = (id, filePath, Sequelize) => {
     try{
       fs.createReadStream(filePath).pipe(csv())
         .on('data', (row) => {
-          const point = { type: 'Point', coordinates: [Number(row.lat), Number(row.lng)] };
+          const point = { type: 'Point', coordinates: [Number(row.lng), Number(row.lat)] };
 
           const rowData = {
             vehicleId: id,

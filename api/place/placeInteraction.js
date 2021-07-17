@@ -1,6 +1,6 @@
-const { Op } = require('sequelize');
-const { vehicle, track } = require('../../db/models');
-const { ERROR_500 } = require('../../constants/errorCodes')
+const { Op, fn, col } = require('sequelize');
+const { vehicle, track, place } = require('../../db/models');
+const { ERROR_500, INVALID_DATA } = require('../../constants/errorCodes')
 
 const limit = 50;
 
@@ -10,16 +10,35 @@ const placeInteraction = async (req, res) => {
 
     const offset = ((page - 1) * limit);
 
-    const data = await track.findAndCountAll({
+    const placeData = await place.findOne({
       where: {
-        trackedAt: {
-          [Op.between]: [new Date(startDate), new Date(endDate).setHours(23,59,59,999)]
-        }
-      },
-      include: [{model: vehicle}],
-      limit: limit,
-      offset: offset,
-      order: [['trackedAt', 'ASC']]
+        id: placeId
+      }
+    });
+
+    if(!placeData){
+      res.send(INVALID_DATA);
+      return;
+    }
+
+    const contains = fn('ST_CONTAINS',
+      placeData.border,
+      col('location')
+    );
+    console.log(contains);
+
+    const data = await track.findAll({
+      where: contains,
+      // where: {
+      //   location: []
+      //   trackedAt: {
+      //     [Op.between]: [new Date(startDate), new Date(endDate).setHours(23,59,59,999)]
+      //   }
+      // },
+      // include: [{model: vehicle}],
+      // limit: limit,
+      // offset: offset,
+      // order: [['trackedAt', 'ASC']]
     });
 
     res.send({
@@ -30,7 +49,7 @@ const placeInteraction = async (req, res) => {
       msg: "Place Interaction List"
     });
   }catch (e){
-    res.send(ERROR_500);
+    res.send(e);
   }
 }
 
