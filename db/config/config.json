@@ -1,10 +1,10 @@
 {
   "development": {
-    "username": "admin",
-    "password": "az19!*SST",
+    "username": "postgres",
+    "password": "root",
     "database": "tracker",
     "host": "127.0.0.1",
-    "dialect": "mysql"
+    "dialect": "postgres"
   },
   "test": {
     "username": "root",

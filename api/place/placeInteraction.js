@@ -6,7 +6,7 @@ const limit = 50;
 
 const placeInteraction = async (req, res) => {
   try{
-    const {startDate, endDate, page = 1} = req.query;
+    const {placeId, startDate, endDate, page = 1} = req.query;
 
     const offset = ((page - 1) * limit);
 

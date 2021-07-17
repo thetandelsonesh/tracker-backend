@@ -1,9 +1,11 @@
 const express = require('express');
 
-const interaction = require('./placeInteraction');
+const placeInteraction = require('./placeInteraction');
+const placeList = require('./placeList');
 
 const router = express.Router();
 
-router.get('/interaction', interaction);
+router.get('/', placeList);
+router.get('/interaction', placeInteraction);
 
 module.exports = router;

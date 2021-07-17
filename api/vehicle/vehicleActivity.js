@@ -1,10 +1,10 @@
 const { Op } = require('sequelize');
 const { track } = require('../../db/models');
-const { ERROR_500 } = require('../../constants/errorCodes')
+const { ERROR_500, NO_DATA_FOUND } = require('../../constants/errorCodes')
 
 const vehicleActivity = async (req, res) => {
   try{
-    const {startDate, endDate, vehicleId,} = req.query;
+    const {startDate, endDate, vehicleId} = req.query;
 
     const list = await track.findAll({
       where: {
@@ -15,6 +15,11 @@ const vehicleActivity = async (req, res) => {
       },
       order: [['trackedAt', 'ASC']]
     });
+
+    if(list.length === 0){
+      res.send(NO_DATA_FOUND);
+      return;
+    }
 
     res.send({
       payload: {

@@ -10,12 +10,11 @@ const readCSV = (id, filePath, Sequelize) => {
     try{
       fs.createReadStream(filePath).pipe(csv())
         .on('data', (row) => {
-          const point = `POINT(${Number(row.lat)} ${Number(row.lng)})`;
-          // const point = { type: 'Point', coordinates: [Number(row.lat), Number(row.lng)] };
+          const point = { type: 'Point', coordinates: [Number(row.lat), Number(row.lng)] };
 
           const rowData = {
             vehicleId: id,
-            location: (row.lat && row.lng) ? Sequelize.fn('ST_GeomFromText', point) : null,
+            location: (row.lat && row.lng) ? Sequelize.fn('ST_GeomFromGeoJSON', JSON.stringify(point)) : null,
             trackedAt: row.time ? new Date(row.time) : null,
             createdAt: Sequelize.literal('CURRENT_TIMESTAMP'),
             updatedAt: Sequelize.literal('CURRENT_TIMESTAMP')

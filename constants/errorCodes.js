@@ -2,7 +2,7 @@ module.exports = {
   NO_DATA_FOUND: {
     error: {
       code: 'NO_DATA_FOUND',
-      msg: 'Data not found'
+      msg: 'No Data found!'
     }
   },
   INVALID_DATA: {
@@ -15,12 +15,6 @@ module.exports = {
     error: {
       code: 'ERROR_500',
       msg: 'Something went wrong. Please try again'
-    }
-  },
-  LIMIT_REACHED: {
-    error: {
-      code: 'LIMIT_REACHED',
-      msg: 'Limit reached!'
     }
   },
   NO_X_API_TOKEN: {
