@@ -1,7 +1,7 @@
-const { Op } = require('sequelize');
+const { QueryTypes } = require('sequelize');
 const Joi = require('joi');
 
-const { track } = require('../../db/models');
+const { sequelize } = require('../../db/models');
 const { ERROR_500, NO_DATA_FOUND, INVALID_DATA } = require('../../constants/errorCodes')
 
 const schema = Joi.object({
@@ -21,24 +21,24 @@ const vehicleActivity = async (req, res) => {
   }
 
   try{
-    const list = await track.findAll({
-      where: {
-        vehicleId: vehicleId,
-        trackedAt: {
-          [Op.between]: [new Date(startDate*1000), new Date(endDate*1000)]
-        }
-      },
-      order: [['trackedAt', 'ASC']]
-    });
 
-    if(list.length === 0){
+    const selectQuery = `
+        SELECT ST_MakeLine(tracks."location") as polyline, tracks."vehicleId" 
+        FROM tracks
+        WHERE tracks."vehicleId" = ${vehicleId}
+        AND tracks."trackedAt" BETWEEN '${new Date(startDate*1000).toISOString()}' AND '${new Date(endDate*1000).toISOString()}'
+        GROUP BY tracks."vehicleId"
+    `;
+
+    const results = await sequelize.query(selectQuery, { type: QueryTypes.SELECT });
+
+    if(results.length === 0){
       res.send(NO_DATA_FOUND);
       return;
     }
-
     res.send({
       payload: {
-        list: list
+        polyline: JSON.stringify(results)
       },
       msg: "Vehicle Activity List"
     });
