@@ -1,7 +1,7 @@
-const { Op, fn, col } = require('sequelize');
+const { QueryTypes } = require('sequelize');
 const Joi = require('joi');
 
-const { vehicle, track, place } = require('../../db/models');
+const { sequelize } = require('../../db/models');
 const { ERROR_500, INVALID_DATA, NO_DATA_FOUND } = require('../../constants/errorCodes')
 
 const limit = 50;
@@ -27,38 +27,41 @@ const placeInteraction = async (req, res) => {
 
   try{
 
-    const placeData = await place.findOne({
-      where: {
-        id: placeId
-      }
-    });
+    const stWithin = `ST_Within(tracks."location", (select places."border" from places where places."id" = ${placeId}))`;
 
-    if(!placeData){
-      res.send(INVALID_DATA);
-      return;
-    }
 
-    const data = await track.findAndCountAll({
-      where: {
-        trackedAt: {
-          [Op.between]: [new Date(startDate*1000), new Date(endDate*1000)]
-        }
-      },
-      include: [{model: vehicle}],
-      limit: limit,
-      offset: offset,
-      order: [['trackedAt', 'ASC']]
-    });
+    const selectQueryCount = `
+        SELECT count('*')
+        FROM tracks
+        WHERE tracks."trackedAt" BETWEEN '${new Date(startDate*1000).toISOString()}' AND '${new Date(endDate*1000).toISOString()}'
+        AND ${stWithin} = true
+    `;
 
-    if(data.count === 0){
+    const countResult = await sequelize.query(selectQueryCount, { type: QueryTypes.SELECT });
+
+    const { count } = countResult[0];
+
+    const selectQuery = `
+        SELECT tracks."id", tracks."vehicleId", v."license",  v."model", tracks."location", tracks."trackedAt"
+        FROM tracks
+        LEFT JOIN vehicles as v ON (v."id" = tracks."vehicleId")
+        WHERE tracks."trackedAt" BETWEEN '${new Date(startDate*1000).toISOString()}' AND '${new Date(endDate*1000).toISOString()}'
+        AND ${stWithin} = true
+        LIMIT ${limit}
+        OFFSET ${offset}
+    `;
+
+    const results = await sequelize.query(selectQuery, { type: QueryTypes.SELECT });
+
+    if(results.length === 0){
       res.send(NO_DATA_FOUND);
       return;
     }
 
     res.send({
       payload: {
-        list: data.rows,
-        total: data.count,
+        list: results,
+        total: count,
       },
       msg: "Place Interaction List"
     });
